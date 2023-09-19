@@ -6,44 +6,64 @@ Created on Thu Sep 14 00:34:39 2023
 """
 import numpy as np
 
-def creerMatrice(n):
+def creerVille(nbV):
+    abscisses = []
+    ordonnees = []
     
-    # Générer une matrice aléatoire de taille n x n
-    matrice = np.random.randint(1, 100, size =(n,n))
+    for _ in range(nbV):
+        x = np.random.uniform(0, 100)  # Abscisse aléatoire entre 0 et 10
+        y = np.random.uniform(0, 100)  # Coordonnée aléatoire entre 0 et 10
+        abscisses.append(x)
+        ordonnees.append(y)
+    return abscisses, ordonnees
+
+def creerMatrice(nbV):
     
-    # Remplacer la diagonale par des zéros
-    np.fill_diagonal(matrice, 0)
+    coordonnees = creerVille(nbV)
+    print(coordonnees)
+    print("------------------")
+    abscisses = coordonnees[0]
+    ordonnees = coordonnees[1]
     
-    for i in range(n):
-        for j in range(i, n):
-            matrice[j][i] = matrice[i][j]
+    matrice = np.zeros((nbV, nbV))
     
-    # Afficher la matrice résultante
+    for depart in range (nbV):
+        for arrive in range (nbV):
+            if depart != arrive :
+                distance = np.sqrt(((abscisses[arrive]-abscisses[depart])**2)+((ordonnees[arrive]-ordonnees[depart])**2))
+                matrice[depart,arrive] = distance
+    
     return matrice
     
-def creerIndividusDepart(n):
-    liste = list(range(0, n))
+def creerIndividusDepart(nbV):
+    liste = list(range(0, nbV))
     np.random.shuffle(liste)
     
     return liste
     
-def calculerDistance(M,I,n):
+def calculerDistance(M,I,nbV):
     distance = 0
-    for i in range(n):
+    for i in range(nbV):
         depart = I[i]
-        if (i==n-1):
+        if (i==nbV-1):
             arriver = I[0]
         else:
             arriver = I[i+1]
         distance += M[depart,arriver]
         
     return(distance)
-    
-M = creerMatrice(5)
-classement = []
-for i in range(5):
-    I = creerIndividusDepart(5)
-    classement.append((I,calculerDistance(M, I, 5)))
-tableau_trie = sorted(classement, key=lambda x: x[1])
-print(tableau_trie)
-print(tableau_trie[2])
+
+def creerClassement(nbI,nbV):
+    M = creerMatrice(nbV)
+    classementNonTrie = []
+    for i in range(nbI):
+        I = creerIndividusDepart(nbV)
+        classementNonTrie.append((I,calculerDistance(M, I, nbV)))
+    classementFinal = sorted(classementNonTrie, key=lambda x: x[1])
+    return(classementFinal)
+
+result = (creerClassement(100, 50))
+print(result)
+#print("----------------")
+#print(result[0][0])
+
