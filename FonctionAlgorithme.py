@@ -62,6 +62,15 @@ def creerClassement(nbI,nbV):
     classementFinal = sorted(classementNonTrie, key=lambda x: x[1])
     return(classementFinal)
 
+def croisement():
+    return("coucou")
+
+def mutation():
+    return("saucisse")
+
+def créationNouvelleGénération:
+    
+
 result = (creerClassement(100, 50))
 print(result)
 #print("----------------")
