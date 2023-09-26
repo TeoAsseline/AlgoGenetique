@@ -80,9 +80,24 @@ def creerClassement(I):
     classementFinal = sorted(classementNonTrie, key=lambda x: x[1])
     return(classementFinal)
 
+def roulette(tailleSelection):
+    roue = []
+    valeur = 1
+    total = 0
+    for i in range(tailleSelection):
+        valeur += i
+        total += valeur
+        roue.append(valeur)
+    tirage = random.uniform(0, total)
+    sommeValeur = 0
+    for rang, valeur in enumerate(roue):
+        sommeValeur += valeur
+        if sommeValeur >= tirage :
+            return tailleSelection-rang-1
+    
+
 def croisement(ind1, ind2):
     global nbV
-    print("Croisement effectué")
     coupe1 = np.random.randint(0,nbV)
     coupe2 = np.random.randint(0,nbV)
     while (coupe2==coupe1):
@@ -127,7 +142,6 @@ def croisement(ind1, ind2):
     return(ind1, ind2)
 
 def mutation(ind):
-    print("MUTATION")
     global nbV
     v1 = np.random.randint(0,nbV)
     v2 = np.random.randint(0,nbV)
@@ -141,10 +155,14 @@ def créationNouvelleGénération(genPr):
     genPr = genPr[:taille//2]
     newGen = []
     for i in range(taille//2):
-        alea1 = np.random.randint(0,taille//2)
-        alea2 = np.random.randint(0,taille//2)
+        alea1 = roulette(taille//2)
+        alea2 = roulette(taille//2)
         while (alea2==alea1):
-            alea2 = np.random.randint(0,taille//2)
+             alea2 = roulette(taille//2)
+        # alea1 = np.random.randint(0,taille//2)
+        # alea2 = np.random.randint(0,taille//2)
+        # while (alea2==alea1):
+        #     alea2 = np.random.randint(0,taille//2)
         ind1 = genPr[alea1][0]
         ind2 = genPr[alea2][0]
         ind1_copy = ind1[:]
@@ -183,10 +201,10 @@ def generergraph(coordonnees,meilleurchemin):
     print("------------------")
     return 1;
     
-I=creerIndividusDepart(5)
-print(I)
-result = creerClassement(I)
-result2 = créationNouvelleGénération(result)
-print(result2)
-coordonnees = creerVille()
-generergraph(coordonnees,result2)
+# I=creerIndividusDepart(5)
+# print(I)
+# result = creerClassement(I)
+# result2 = créationNouvelleGénération(result)
+# print(result2)
+# coordonnees = creerVille()
+# generergraph(coordonnees,result2)
