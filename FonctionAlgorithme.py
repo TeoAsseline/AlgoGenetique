@@ -17,11 +17,19 @@ def rangerCoordonnees(coord):
         result.append(point)
     return result
 
+def recuperercoordpoint(coord,listeI):
+    result=[]
+    for i in listeI:
+        point = [coord[0][i],coord[1][i]]
+        result.append(point)
+    point = [coord[0][listeI[0]],coord[1][listeI[0]]]
+    result.append(point)
+    return result
+
 def creerVille():
     global nbV
     abscisses = []
     ordonnees = []
-    
     for _ in range(nbV):
         x = np.random.uniform(0, 100)
         y = np.random.uniform(0, 100)  
@@ -31,47 +39,21 @@ def creerVille():
 
 def creerMatrice():
     global nbV
-    
-    coordonnees = creerVille()
-    print("------------------")
-    for i in range (nbV):
-        print("Point numéro ",i+1," / Abscisse :",coordonnees[0][i]," / Ordonné :",coordonnees[1][i])
-    rangecoord=rangerCoordonnees(coordonnees)
-    listeville=[]
-    for i in range (len(rangecoord)):
-        listeville.append(i)
-    print(rangecoord)
-    x, y = zip(*rangecoord)
-    plt.scatter(x,y,marker="*")
-    for i in range(len(listeville)):   
-        plt.text(x[i]+.09, y[i]+.09,listeville[i], fontsize=9)
-    plt.title("Liste des emplacements des Villes")
-    plt.xlabel("Abscisses")
-    plt.ylabel("Ordonnees")
-    plt.show()
-    print("------------------")
-    abscisses = coordonnees[0]
-    ordonnees = coordonnees[1]
-    
     coordonnees = creerVille()
     abscisses = coordonnees[0]
     ordonnees = coordonnees[1]
-    
     matrice = np.zeros((nbV, nbV))
-    
     for depart in range (nbV):
         for arrive in range (nbV):
             if depart != arrive :
                 distance = np.sqrt(((abscisses[arrive]-abscisses[depart])**2)+((ordonnees[arrive]-ordonnees[depart])**2))
                 matrice[depart,arrive] = distance
-    
     return matrice
     
 def creerIndividusDepart():
     global nbV
     liste = list(range(0, nbV))
     np.random.shuffle(liste)
-    
     return liste
     
 def calculerDistance(M,I):
@@ -84,15 +66,13 @@ def calculerDistance(M,I):
         else:
             arriver = I[i+1]
         distance += M[depart,arriver]
-        
     return(distance)
 
-def creerClassement(nbI):
+def creerClassement(I):
     global nbV
     M = creerMatrice()
     classementNonTrie = []
-    for i in range(nbI):
-        I = creerIndividusDepart()
+    for i in range(len(I)):
         classementNonTrie.append((I,calculerDistance(M, I)))
     classementFinal = sorted(classementNonTrie, key=lambda x: x[1])
     return(classementFinal)
@@ -133,23 +113,25 @@ def croisement(ind1, ind2):
     for element in ensembleVille:
         if element not in ind2:
             vManquante2.append(element)
-    
     random.shuffle(vManquante1)
     for i in range(nbV):
         if ind1[i] == "y":
             ind1[i] = vManquante1.pop()
-    
     random.shuffle(vManquante2)
     for i in range(nbV):
         if ind2[i] == "y":
             ind2[i] = vManquante2.pop()
-    
     return(ind1, ind2)
 
 def mutation(ind):
     print("MUTATION")
+    global nbV
+    v1 = np.random.randint(0,nbV)
+    v2 = np.random.randint(0,nbV)
+    while (v2==v1):
+        v2 = np.random.randint(0,nbV)
+    ind[v1],ind[v2]=ind[v2],ind[v1]
     return(ind)
-
 
 def créationNouvelleGénération(genPr):
     taille = len(genPr)
@@ -171,14 +153,34 @@ def créationNouvelleGénération(genPr):
             indFini2 = mutation(indFini2)
         newGen.append(indFini1)
         newGen.append(indFini2)
-    
     return newGen
-    
 
-result = creerClassement(10)
+def generergraph(coordonnees,meilleurchemin):
+    listexy=recuperercoordpoint(coordonnees,meilleurchemin[0])
+    global nbV
+    print("------------------")
+    for i in range (nbV):
+        print("Point numéro ",i+1," / Abscisse :",coordonnees[0][i]," / Ordonné :",coordonnees[1][i])
+    rangecoord=rangerCoordonnees(coordonnees)
+    listeville=[]
+    for i in range (len(rangecoord)):
+        listeville.append(i)
+    x, y = zip(*rangecoord)
+    plt.scatter(x,y,marker="*",color='b')
+    w, z = zip(*listexy)
+    plt.plot(w, z,color='g')
+    for i in range(len(listeville)):   
+        plt.text(x[i]+.09, y[i]+.09,listeville[i], fontsize=9)
+    plt.title("Liste des emplacements des Villes")
+    plt.xlabel("Abscisses")
+    plt.ylabel("Ordonnees")
+    plt.show()
+    print("------------------")
+    return 1;
+    
+I=creerIndividusDepart()
+result = creerClassement(I)
 result2 = créationNouvelleGénération(result)
 print(result2)
-
-#print("----------------")
-#print(result[0][0])
-
+coordonnees = creerVille()
+generergraph(coordonnees,result2)
