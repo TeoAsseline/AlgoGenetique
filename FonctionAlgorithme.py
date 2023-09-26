@@ -50,11 +50,14 @@ def creerMatrice():
                 matrice[depart,arrive] = distance
     return matrice
     
-def creerIndividusDepart():
+def creerIndividusDepart(nbI):
     global nbV
-    liste = list(range(0, nbV))
-    np.random.shuffle(liste)
-    return liste
+    listeFinal =[]
+    for i in range (nbI):
+        liste=list(range(0, nbV))
+        np.random.shuffle(liste)
+        listeFinal.append(liste)
+    return listeFinal
     
 def calculerDistance(M,I):
     global nbV
@@ -72,9 +75,10 @@ def creerClassement(I):
     global nbV
     M = creerMatrice()
     classementNonTrie = []
-    for i in range(len(I)):
-        classementNonTrie.append((I,calculerDistance(M, I)))
+    for i, ind in enumerate(I):
+        classementNonTrie.append((ind,calculerDistance(M, ind)))
     classementFinal = sorted(classementNonTrie, key=lambda x: x[1])
+    print (classementFinal)
     return(classementFinal)
 
 def croisement(ind1, ind2):
@@ -178,7 +182,8 @@ def generergraph(coordonnees,meilleurchemin):
     print("------------------")
     return 1;
     
-I=creerIndividusDepart()
+I=creerIndividusDepart(5)
+print(I)
 result = creerClassement(I)
 result2 = créationNouvelleGénération(result)
 print(result2)
