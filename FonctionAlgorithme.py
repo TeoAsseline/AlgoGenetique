@@ -8,7 +8,7 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 
-nbV = 10
+nbV = 20
 
 def rangerCoordonnees(coord):
     result=[]
@@ -78,7 +78,6 @@ def creerClassement(I):
     for i, ind in enumerate(I):
         classementNonTrie.append((ind,calculerDistance(M, ind)))
     classementFinal = sorted(classementNonTrie, key=lambda x: x[1])
-    print (classementFinal)
     return(classementFinal)
 
 def croisement(ind1, ind2):
@@ -148,7 +147,9 @@ def créationNouvelleGénération(genPr):
             alea2 = np.random.randint(0,taille//2)
         ind1 = genPr[alea1][0]
         ind2 = genPr[alea2][0]
-        individusFini = croisement(ind1, ind2)
+        ind1_copy = ind1[:]
+        ind2_copy = ind2[:]
+        individusFini = croisement(ind1_copy, ind2_copy)
         indFini1 = individusFini[0]
         indFini2 = individusFini[1]
         if (np.random.rand()<0.1):    
