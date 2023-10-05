@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Sep 14 00:34:39 2023
-
 @author: assel
 """
 import numpy as np
 import random
 import matplotlib.pyplot as plt
 
-nbV = 20
+#VARIABLE GLOBAL DU NB DE VILLE
+global nbV
 
+#RANGER LES COORDONNES X,Y par chaque point
 def rangerCoordonnees(coord):
     result=[]
     for i in range(len(coord[0])):
@@ -17,6 +18,7 @@ def rangerCoordonnees(coord):
         result.append(point)
     return result
 
+#RANGER LES COORDONNES en Liste X et Y POUR POUVOIR LES AFFICHER
 def recuperercoordpoint(coord,listeI):
     result=[]
     for i in listeI:
@@ -26,10 +28,12 @@ def recuperercoordpoint(coord,listeI):
     result.append(point)
     return result
 
-def creerVille():
+#CREER les Abscisses et Ordonnees de la liste des villes
+def creerVille(seed=None):
     global nbV
     abscisses = []
     ordonnees = []
+    np.random.seed(seed)
     for _ in range(nbV):
         x = np.random.uniform(0, 100)
         y = np.random.uniform(0, 100)  
@@ -37,9 +41,10 @@ def creerVille():
         ordonnees.append(y)
     return abscisses, ordonnees
 
+#CREER UNE MATRICE DES COORDONNEES DES VILLES CONTENANT LEUR DISTANCE
 def creerMatrice():
     global nbV
-    coordonnees = creerVille()
+    coordonnees = creerVille(21) #seed choisie
     abscisses = coordonnees[0]
     ordonnees = coordonnees[1]
     matrice = np.zeros((nbV, nbV))
@@ -50,6 +55,7 @@ def creerMatrice():
                 matrice[depart,arrive] = distance
     return matrice
     
+#CREER UNE LISTE ALEATOIRE DES INDIVIDUS
 def creerIndividusDepart(nbI):
     global nbV
     listeFinal =[]
@@ -58,7 +64,8 @@ def creerIndividusDepart(nbI):
         np.random.shuffle(liste)
         listeFinal.append(liste)
     return listeFinal
-    
+
+#CALCULER LA DISTANCE TOTALE POUR UN INDIVIDU
 def calculerDistance(M,I):
     global nbV
     distance = 0
@@ -71,6 +78,7 @@ def calculerDistance(M,I):
         distance += M[depart,arriver]
     return(distance)
 
+#CREER LE CLASSEMENT DES INDIVIDUS ET LEUR DISTANCE POUR UNE GENERATION
 def creerClassement(I):
     global nbV
     M = creerMatrice()
@@ -80,12 +88,17 @@ def creerClassement(I):
     classementFinal = sorted(classementNonTrie, key=lambda x: x[1])
     return(classementFinal)
 
+#ROULETTE DEFINI POUR CHOISIR UN INDIVIDU EN FONCTION DE SON CLASSEMENT
 def roulette(tailleSelection):
     roue = []
     valeur = 1
     total = 0
-    for i in range(tailleSelection):
-        valeur *= 2
+    for i in range(tailleSelection//2):
+        valeur *= (0.5)**(2/tailleSelection)
+        total += valeur
+        roue.append(valeur)
+    for i in range(tailleSelection//2):
+        valeur *= (0.05)**(2/tailleSelection)
         total += valeur
         roue.append(valeur)
     tirage = random.uniform(0, total)
@@ -93,9 +106,9 @@ def roulette(tailleSelection):
     for rang, valeur in enumerate(roue):
         sommeValeur += valeur
         if sommeValeur >= tirage :
-            return tailleSelection-rang-1
+            return rang
     
-
+#PERMET DE CROISER 2 INDIVIDU POUR EN FORMER 1 NOUVEAU
 def croisement(ind1, ind2):
     global nbV
     coupe1 = np.random.randint(0,nbV)
@@ -141,6 +154,7 @@ def croisement(ind1, ind2):
             ind2[i] = vManquante2.pop()
     return(ind1, ind2)
 
+#INTERVERTI LE PLACEMENT DE VILLE POUR 1 INDIVIDU
 def mutation(ind):
     global nbV
     v1 = np.random.randint(0,nbV)
@@ -150,19 +164,15 @@ def mutation(ind):
     ind[v1],ind[v2]=ind[v2],ind[v1]
     return(ind)
 
+#PERMET DE CREER UNE NOUVELLE GENERATION D'INDIVIDU
 def créationNouvelleGénération(genPr):
     taille = len(genPr)
-    genPr = genPr[:taille//2]
     newGen = []
     for i in range(taille//2):
-        alea1 = roulette(taille//2)
-        alea2 = roulette(taille//2)
+        alea1 = roulette(taille)
+        alea2 = roulette(taille)
         while (alea2==alea1):
-             alea2 = roulette(taille//2)
-        # alea1 = np.random.randint(0,taille//2)
-        # alea2 = np.random.randint(0,taille//2)
-        # while (alea2==alea1):
-        #     alea2 = np.random.randint(0,taille//2)
+             alea2 = roulette(taille)
         ind1 = genPr[alea1][0]
         ind2 = genPr[alea2][0]
         ind1_copy = ind1[:]
@@ -170,14 +180,15 @@ def créationNouvelleGénération(genPr):
         individusFini = croisement(ind1_copy, ind2_copy)
         indFini1 = individusFini[0]
         indFini2 = individusFini[1]
-        # if (np.random.rand()<0.1):    
-        #     indFini1 = mutation(indFini1)
-        # if (np.random.rand()<0.1):    
-        #     indFini2 = mutation(indFini2)
+        if (np.random.rand()<0.01):    
+            indFini1 = mutation(indFini1)
+        if (np.random.rand()<0.01):    
+            indFini2 = mutation(indFini2)
         newGen.append(indFini1)
         newGen.append(indFini2)
     return newGen
 
+#GENERE LE GRAPHIQUE DE L'EMPLACEMENT DES VILLES 
 def generergraph(coordonnees,meilleurchemin):
     listexy=recuperercoordpoint(coordonnees,meilleurchemin[0])
     global nbV
@@ -191,7 +202,7 @@ def generergraph(coordonnees,meilleurchemin):
     x, y = zip(*rangecoord)
     plt.scatter(x,y,marker="*",color='b')
     w, z = zip(*listexy)
-    plt.plot(w, z,color='g')
+    plt.plot(w, z,'--',color='g')
     for i in range(len(listeville)):   
         plt.text(x[i]+.09, y[i]+.09,listeville[i], fontsize=9)
     plt.title("Liste des emplacements des Villes")
@@ -200,11 +211,25 @@ def generergraph(coordonnees,meilleurchemin):
     plt.show()
     print("------------------")
     return 1;
-    
-# I=creerIndividusDepart(5)
-# print(I)
-# result = creerClassement(I)
-# result2 = créationNouvelleGénération(result)
-# print(result2)
-# coordonnees = creerVille()
-# generergraph(coordonnees,result2)
+
+#GENERE LE CHEMIN LE PLUS COURT ENTRE LES VILLES ET L'AFFICHE
+def schemaLePlusCourt(nbI,nbGen,nbVille,seed=None):
+    global nbV
+    nbV=nbVille
+    coordonnees = creerVille(seed)
+    I = creerIndividusDepart(nbI)
+    result = creerClassement(I)
+    x = []
+    y = []
+    for i in range (nbGen):
+        x.append(i)
+        result = créationNouvelleGénération(result)
+        result = creerClassement(result)
+        y.append(result[0][1])
+    plt.scatter(x,y)
+    plt.title("Le score du meilleur individu pour chaque génération")
+    plt.xlabel("numéro Génération")
+    plt.ylabel("Distance du chemin le plus court")
+    plt.show()
+    generergraph(coordonnees,result[0])
+    return result;
