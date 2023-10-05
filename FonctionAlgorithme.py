@@ -85,7 +85,7 @@ def roulette(tailleSelection):
     valeur = 1
     total = 0
     for i in range(tailleSelection):
-        valeur += i
+        valeur *= 2
         total += valeur
         roue.append(valeur)
     tirage = random.uniform(0, total)
@@ -170,10 +170,10 @@ def créationNouvelleGénération(genPr):
         individusFini = croisement(ind1_copy, ind2_copy)
         indFini1 = individusFini[0]
         indFini2 = individusFini[1]
-        if (np.random.rand()<0.1):    
-            indFini1 = mutation(indFini1)
-        if (np.random.rand()<0.1):    
-            indFini2 = mutation(indFini2)
+        # if (np.random.rand()<0.1):    
+        #     indFini1 = mutation(indFini1)
+        # if (np.random.rand()<0.1):    
+        #     indFini2 = mutation(indFini2)
         newGen.append(indFini1)
         newGen.append(indFini2)
     return newGen
