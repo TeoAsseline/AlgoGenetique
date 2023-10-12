@@ -6,6 +6,7 @@ Created on Thu Sep 14 00:34:39 2023
 import numpy as np
 import random
 import matplotlib.pyplot as plt
+import pandas as pd
 
 #VARIABLE GLOBAL DU NB DE VILLE
 global nbV
@@ -41,10 +42,24 @@ def creerVille(seed=None):
         ordonnees.append(y)
     return abscisses, ordonnees
 
+#RECUPERER LES ABSCISSES ET ORDONNEES DU FICHIER CSV POUR LE DEFI DES 250 VILLES
+def recupererVille():
+    df = pd.read_csv('defi250.csv')
+    df = df.apply(lambda x: x.str.split(';'))
+    df2 = df.values.tolist()
+    villes = [sous_liste[0] for sous_liste in df2]
+    abscisses = []
+    ordonnees = []
+    for sous_liste in villes:
+        abscisses.append(float(sous_liste[0]))
+        ordonnees.append(float(sous_liste[1]))
+    return abscisses, ordonnees
+
 #CREER UNE MATRICE DES COORDONNEES DES VILLES CONTENANT LEUR DISTANCE
 def creerMatrice():
     global nbV
-    coordonnees = creerVille(21) #seed choisie
+    coordonnees = recupererVille()
+    #coordonnees = creerVille(21) #seed choisie
     abscisses = coordonnees[0]
     ordonnees = coordonnees[1]
     matrice = np.zeros((nbV, nbV))
@@ -216,7 +231,8 @@ def generergraph(coordonnees,meilleurchemin):
 def schemaLePlusCourt(nbI,nbGen,nbVille,seed=None):
     global nbV
     nbV=nbVille
-    coordonnees = creerVille(seed)
+    coordonnees = recupererVille()
+    #coordonnees = creerVille(seed)
     I = creerIndividusDepart(nbI)
     result = creerClassement(I)
     x = []

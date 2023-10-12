@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 # FA.generergraph(coordonnees,I)
 
 #AFFICHER LE SCORE DU MEILLEUR INDIVIDU POUR CHAQUE GENERATION
-nbGeneration=55
+nbGeneration=300
 nbIndividu=100
-seed=21
-nbVille=25
+seed=None
+nbVille=250
 resultat=FA.schemaLePlusCourt(nbIndividu,nbGeneration,nbVille,seed)
 print("Classement de la dernière génération : ",resultat)
 
@@ -23,3 +23,5 @@ print("Classement de la dernière génération : ",resultat)
 #     print(FA.roulette(100))
 # plt.scatter(x,y)
 # plt.show()
+
+
