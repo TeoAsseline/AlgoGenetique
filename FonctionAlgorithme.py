@@ -56,10 +56,10 @@ def recupererVille():
     return abscisses, ordonnees
 
 #CREER UNE MATRICE DES COORDONNEES DES VILLES CONTENANT LEUR DISTANCE
-def creerMatrice():
+def creerMatrice(seed=None):
     global nbV
     #coordonnees = recupererVille()
-    coordonnees = creerVille(21) #seed choisie
+    coordonnees = creerVille(seed) #seed choisie
     abscisses = coordonnees[0]
     ordonnees = coordonnees[1]
     matrice = np.zeros((nbV, nbV))
@@ -94,9 +94,9 @@ def calculerDistance(M,I):
     return(distance)
 
 #CREER LE CLASSEMENT DES INDIVIDUS ET LEUR DISTANCE POUR UNE GENERATION
-def creerClassement(I):
+def creerClassement(I,seed=None):
     global nbV
-    M = creerMatrice()
+    M = creerMatrice(seed)
     classementNonTrie = []
     for i, ind in enumerate(I):
         classementNonTrie.append((ind,calculerDistance(M, ind)))
@@ -234,13 +234,13 @@ def schemaLePlusCourt(nbI,nbGen,nbVille,seed=None):
     #coordonnees = recupererVille()
     coordonnees = creerVille(seed)
     I = creerIndividusDepart(nbI)
-    result = creerClassement(I)
+    result = creerClassement(I,seed)
     x = []
     y = []
     for i in range (nbGen):
         x.append(i)
         result = créationNouvelleGénération(result)
-        result = creerClassement(result)
+        result = creerClassement(result,seed)
         y.append(result[0][1])
     plt.scatter(x,y)
     plt.title("Le score du meilleur individu pour chaque génération")
