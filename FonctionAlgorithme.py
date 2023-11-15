@@ -58,8 +58,8 @@ def recupererVille():
 #CREER UNE MATRICE DES COORDONNEES DES VILLES CONTENANT LEUR DISTANCE
 def creerMatrice():
     global nbV
-    coordonnees = recupererVille()
-    #coordonnees = creerVille(21) #seed choisie
+    #coordonnees = recupererVille()
+    coordonnees = creerVille(21) #seed choisie
     abscisses = coordonnees[0]
     ordonnees = coordonnees[1]
     matrice = np.zeros((nbV, nbV))
@@ -231,8 +231,8 @@ def generergraph(coordonnees,meilleurchemin):
 def schemaLePlusCourt(nbI,nbGen,nbVille,seed=None):
     global nbV
     nbV=nbVille
-    coordonnees = recupererVille()
-    #coordonnees = creerVille(seed)
+    #coordonnees = recupererVille()
+    coordonnees = creerVille(seed)
     I = creerIndividusDepart(nbI)
     result = creerClassement(I)
     x = []

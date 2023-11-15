@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 # FA.generergraph(coordonnees,I)
 
 #AFFICHER LE SCORE DU MEILLEUR INDIVIDU POUR CHAQUE GENERATION
-nbGeneration=300
+nbGeneration=55
 nbIndividu=100
-seed=None
-nbVille=250
+seed=21
+nbVille=25
 resultat=FA.schemaLePlusCourt(nbIndividu,nbGeneration,nbVille,seed)
 print("Classement de la dernière génération : ",resultat)
 
